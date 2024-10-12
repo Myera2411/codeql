@@ -133,6 +133,9 @@ private predicate isIrrefutablePattern(Pat pat) {
     // `match` expressions must be irrefutible, so last arm cannot fail
     pat = any(MatchExpr me).getLastArm().getPat()
     or
+    // macro patterns must is irrefutible if its expansion is
+    pat = any(MacroPat mp | isIrrefutablePattern(mp.getMacroCall().getExpanded()))
+    or
     // parameter patterns must be irrefutible
     pat = any(Param p).getPat()
   ) and
@@ -142,6 +145,8 @@ private predicate isIrrefutablePattern(Pat pat) {
     pat = parent.(BoxPat).getPat()
     or
     pat = parent.(IdentPat).getPat()
+    or
+    pat = parent.(MacroPat).getMacroCall().getExpanded()
     or
     pat = parent.(ParenPat).getPat()
     or
